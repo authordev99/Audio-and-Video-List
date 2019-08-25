@@ -1,4 +1,4 @@
-package com.lomotif.android.Model
+package com.lomotif.android.model
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

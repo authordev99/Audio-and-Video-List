@@ -1,6 +1,6 @@
-package com.lomotif.android
+package com.lomotif.android.Interface
 
-import com.lomotif.android.Model.ImageGallery
+import com.lomotif.android.model.ImageGallery
 
 import retrofit2.Call
 import retrofit2.http.GET
