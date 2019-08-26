@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.ObservableArrayList
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lomotif.android.Interface.ApiInterface
 import com.lomotif.android.Interface.BinderHandler
@@ -33,6 +34,45 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
     lateinit var imageGallery: ImageGallery
     var listHits = ObservableArrayList<Any>()
     lateinit var recyclerView: RecyclerView
+    var isNextPageExist = false
+    private var previousTotal = 0
+
+    private val scrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+                val visibleItemCount = recyclerView.childCount
+                val totalItemCount = recyclerView.layoutManager!!.itemCount
+                val manager = recyclerView.layoutManager as StaggeredGridLayoutManager
+
+                var pastVisibleItems = 0
+                var firstVisibleItems: IntArray? = null
+                firstVisibleItems =
+                    manager.findFirstVisibleItemPositions(firstVisibleItems)
+                if (firstVisibleItems != null && firstVisibleItems.isNotEmpty()) {
+                    pastVisibleItems = firstVisibleItems[0]
+                }
+
+                if (isNextPageExist) {
+                    if (totalItemCount > previousTotal) {
+                        isNextPageExist = false
+                        previousTotal = totalItemCount
+                    }
+                }
+
+                if (dy > 0) {
+                    if (!isNextPageExist && (totalItemCount - visibleItemCount)
+                        <= (pastVisibleItems + 10)
+                    ) {
+                        isNextPageExist = true
+                        getImageGallery()
+                    }
+                }
+
+
+            }
+
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +82,7 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
         // Inflate the layout for this fragment
         layout = inflater.inflate(R.layout.recyclerview, container, false)
         recyclerView = layout.findViewById(R.id.recyclerView)
+        recyclerView.addOnScrollListener(scrollListener)
         getImageGallery()
 
         return layout.rootView
@@ -67,14 +108,16 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
                     println("response body = ${response.body()?.total}")
                     imageGallery = response.body()!!
                     listHits.addAll(imageGallery.hits!!)
+                    println("list size = ${listHits.size}")
 
                     val layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+                    layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
                     recyclerView.layoutManager = layoutManager
                     recyclerView.setHasFixedSize(true)
                     recyclerView.adapter =
                         RecyclerViewAdapter(requireContext(), listHits, clickHandler())
+                    (recyclerView.adapter as RecyclerViewAdapter).notifyDataSetChanged()
                 }
             }
         })
@@ -90,7 +133,6 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
 
         }
     }
-
 
     companion object {
         fun newInstance() = ImageFragment()

@@ -1,5 +1,6 @@
 package com.lomotif.android.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.Image
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ObservableArrayList
 import com.lomotif.android.model.Video
@@ -127,16 +129,19 @@ open class RecyclerViewAdapter() :
         override fun bind(item: Any, position: Int) {
             val media = item as Hit
 
-            ivHits.layoutParams.height = getRandomIntInRange(1000,75)
+            //ivHits.layoutParams.height = getRandomIntInRange(1000,75)
 
             Glide.with(context)
                 .load(media.previewURL)
-                .asBitmap()
+                .centerCrop()
+                .fitCenter()
+                .thumbnail(0.3f)
                 .into(ivHits)
             // Set a click listener for card view
             ivHits.setOnClickListener {
                 clickHandler?.onClick(media,position)
             }
+
 
 
         }
