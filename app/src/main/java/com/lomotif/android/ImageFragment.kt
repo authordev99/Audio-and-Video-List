@@ -7,19 +7,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
 import android.widget.Toast
+import androidx.databinding.ObservableArrayList
+import androidx.recyclerview.widget.RecyclerView
 import com.lomotif.android.Interface.ApiInterface
 import com.lomotif.android.Interface.BinderHandler
 import com.lomotif.android.Interface.ClickHandler
 import com.lomotif.android.model.Hit
 import com.lomotif.android.model.ImageGallery
-import com.lomotif.android.utils.ImageAdapterGridView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.lomotif.android.utils.RecyclerViewAdapter
+
 
 /**
  * A simple [Fragment] subclass.
@@ -28,7 +31,8 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
 
     private lateinit var layout: View
     lateinit var imageGallery: ImageGallery
-    lateinit var gridView: GridView
+    var listHits = ObservableArrayList<Any>()
+    lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +40,8 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        layout = inflater.inflate(R.layout.fragment_image, container, false)
-        gridView = layout.findViewById(R.id.gridView)
+        layout = inflater.inflate(R.layout.recyclerview, container, false)
+        recyclerView = layout.findViewById(R.id.recyclerView)
         getImageGallery()
 
         return layout.rootView
@@ -62,11 +66,15 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
                 if (response.isSuccessful) {
                     println("response body = ${response.body()?.total}")
                     imageGallery = response.body()!!
-                    gridView.adapter = ImageAdapterGridView(
-                        requireContext(),
-                        imageGallery.hits!!,
-                        clickHandler()
-                    )
+                    listHits.addAll(imageGallery.hits!!)
+
+                    val layoutManager =
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+                    recyclerView.layoutManager = layoutManager
+                    recyclerView.setHasFixedSize(true)
+                    recyclerView.adapter =
+                        RecyclerViewAdapter(requireContext(), listHits, clickHandler())
                 }
             }
         })
