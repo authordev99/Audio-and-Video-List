@@ -1,48 +1,34 @@
 package com.lomotif.android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import com.lomotif.android.Model.ImageGallery
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import com.lomotif.android.utils.CustomTabLayout
+import com.lomotif.android.utils.SectionsPagerAdapter
+
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewPager: ViewPager
+    private lateinit var adapter: SectionsPagerAdapter
+    private lateinit var tabLayout: CustomTabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        getImageGallery()
+        viewPager = findViewById(R.id.viewPager)
+        tabLayout = findViewById(R.id.custom_tab_layout)
+
+        adapter = SectionsPagerAdapter(supportFragmentManager)
+        adapter.add("Image", ImageFragment.newInstance())
+        adapter.add("Video & Audio", VideoAudioFragment.newInstance())
+        viewPager.adapter = adapter
+        tabLayout.setupWithViewPager(viewPager)
+
+        (viewPager.adapter as SectionsPagerAdapter).notifyDataSetChanged()
+
     }
 
-    private fun getImageGallery() {
-        val retrofit = Retrofit.Builder()
-                .baseUrl(ApiInterface.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-        val apiInterface = retrofit.create(ApiInterface::class.java)
-        val getImageGallery = apiInterface.getImageGallery()
-
-        getImageGallery.enqueue(object : Callback<ImageGallery> {
-            override fun onFailure(call: Call<ImageGallery>, t: Throwable) {
-                //can create custom error message handling to show meaningfull message to client
-                Toast.makeText(this@MainActivity, "Unavailable", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onResponse(call: Call<ImageGallery>, response: Response<ImageGallery>) {
-                if (response.isSuccessful) {
-
-                    println("response body = ${response.body()?.total}")
-
-
-                }
-            }
-        })
-    }
 
 }

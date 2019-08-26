@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Lomotif</string>
+    <string name="permission.file_storage_denied_msg" translatable="false"><![CDATA[You have rejected File Storage Write permission, Lomotif need access to File storage to share files.  Please turn on permissions at [Setting] > [Permission]]]></string>
+    <string name="permission.gallery_denied_msg"><![CDATA[You have rejected Gallery permission, Lomotif cannot access your phone\'s Gallery to select the pictures.  Please turn on permissions at [Setting] > [Permission]]]></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

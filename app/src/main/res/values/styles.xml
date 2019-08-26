@@ -8,4 +8,19 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <style name="AppTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabMaxWidth">0dp</item>
+        <item name="tabContentStart">52dp</item>
+        <item name="tabMode">scrollable</item>
+        <item name="tabIndicatorColor">@android:color/darker_gray</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabPaddingStart">@dimen/content_padding_normal</item>
+        <item name="tabPaddingEnd">@dimen/content_padding_normal</item>
+        <item name="tabBackground">?attr/colorPrimary</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+        <item name="tabTextColor">@android:color/darker_gray</item>
+    </style>
+
+
 </resources>
