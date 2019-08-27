@@ -1,8 +1,6 @@
 package com.lomotif.android.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.media.Image
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -10,19 +8,15 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ObservableArrayList
-import com.lomotif.android.model.Video
 import com.bumptech.glide.Glide
 import com.lomotif.android.Interface.ClickHandler
 import com.lomotif.android.MediaQuery
 import com.lomotif.android.R
 import com.lomotif.android.model.Hit
-import com.lomotif.android.model.ImageGallery
+import com.lomotif.android.model.Video
 import java.io.File
-import kotlin.random.Random
 
 
 open class RecyclerViewAdapter() :
@@ -37,7 +31,6 @@ open class RecyclerViewAdapter() :
         const val ITEM_IMAGE = 1
         const val ITEM_VIDEO_AUDIO = 2
     }
-
 
     constructor(
         context: Context,
@@ -54,8 +47,14 @@ open class RecyclerViewAdapter() :
         val inflater = LayoutInflater.from(parent.context)
 
         return when (viewType) {
-            ITEM_IMAGE -> ViewHolderImage(inflater.inflate(R.layout.list_item_image, parent,false))
-            ITEM_VIDEO_AUDIO -> ViewHolderMedia(inflater.inflate(R.layout.list_item_media, parent, false))
+            ITEM_IMAGE -> ViewHolderImage(inflater.inflate(R.layout.list_item_image, parent, false))
+            ITEM_VIDEO_AUDIO -> ViewHolderMedia(
+                inflater.inflate(
+                    R.layout.list_item_media,
+                    parent,
+                    false
+                )
+            )
             else -> ViewHolderMedia(inflater.inflate(R.layout.list_item_media, parent, false))
         }
     }
@@ -109,7 +108,7 @@ open class RecyclerViewAdapter() :
             }
 
             tvTitle.text = media.display_name
-            tvDuration.text = MediaQuery(context).convertTime(media.duration.toLong())
+            tvDuration.text = Utils.convertTime(media.duration.toLong())
             val uri = Uri.fromFile(File(media.data))
             Glide.with(context).load(uri).thumbnail(0.1f).into(ivThumbnail)
 
@@ -123,13 +122,12 @@ open class RecyclerViewAdapter() :
     inner class ViewHolderImage(itemView: View) : BaseViewHolder<Any>(itemView) {
 
         private val ivHits = itemView.findViewById<ImageView>(R.id.ivHits)
-        private val cvHits = itemView.findViewById<CardView>(R.id.cvHits)
-
+        private val tvUser = itemView.findViewById<TextView>(R.id.tvUser)
 
         override fun bind(item: Any, position: Int) {
             val media = item as Hit
 
-            //ivHits.layoutParams.height = getRandomIntInRange(1000,75)
+            tvUser.text = media.user
 
             Glide.with(context)
                 .load(media.previewURL)
@@ -137,12 +135,11 @@ open class RecyclerViewAdapter() :
                 .fitCenter()
                 .thumbnail(0.3f)
                 .into(ivHits)
+
             // Set a click listener for card view
             ivHits.setOnClickListener {
-                clickHandler?.onClick(media,position)
+                clickHandler?.onClick(media, position)
             }
-
-
 
         }
     }
@@ -151,10 +148,5 @@ open class RecyclerViewAdapter() :
         androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         abstract fun bind(item: T, position: Int)
     }
-
-    private fun getRandomIntInRange(max: Int, min: Int): Int {
-        return Random.nextInt(max - min + min) + min
-    }
-
 
 }

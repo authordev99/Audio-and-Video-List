@@ -1,7 +1,9 @@
 package com.lomotif.android
 
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.ObservableArrayList
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lomotif.android.Interface.ApiInterface
 import com.lomotif.android.Interface.BinderHandler
@@ -23,6 +24,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lomotif.android.utils.RecyclerViewAdapter
+import android.util.DisplayMetrics
+import android.view.Display
+import com.lomotif.android.utils.Utils
 
 
 /**
@@ -111,7 +115,10 @@ class ImageFragment : Fragment(), BinderHandler<Any> {
                     println("list size = ${listHits.size}")
 
                     val layoutManager =
-                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                        StaggeredGridLayoutManager(
+                            Utils.calculateNoOfColumns(requireContext(), 200f),
+                            StaggeredGridLayoutManager.VERTICAL
+                        )
                     layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
                     recyclerView.layoutManager = layoutManager
                     recyclerView.setHasFixedSize(true)

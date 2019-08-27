@@ -39,11 +39,6 @@ public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         titleList.add(title);
         fragmentList.add(fragment);
     }
-//
-//    @Override
-//    public int getItemPosition(@NonNull Object object) {
-//        return POSITION_NONE;
-//    }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

@@ -18,10 +18,6 @@ import com.lomotif.android.R;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-/**
- * Created by Teck Ken on 12-Sep-17.
- */
-
 public class DownloadUtils {
     private Context mContext;
     private DownloadManager downloadManager;
